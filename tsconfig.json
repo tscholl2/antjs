@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "charset": "uft8",
+    "lib": ["esnext"],
+    "target": "esnext",
+    "strict": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}

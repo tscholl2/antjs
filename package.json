@@ -1,0 +1,21 @@
+{
+  "name": "antjs",
+  "version": "0.0.1",
+  "scripts": {
+    "lint": "prettier --print-width 100 --trailing-comma all --write src/**/*.{ts,js}",
+    "bench": "find src/ -name *_bench* | xargs -n 1 ts-node -O '{\"module\":\"commonjs\"}'",
+    "run": "ts-node -O '{\"module\":\"commonjs\"}'",
+    "test": "find src/ -name *_test* | xargs -n 1 ts-node -O '{\"module\":\"commonjs\"}' | tap-summary",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/benchmark": "1.0.31",
+    "@types/tape": "4.2.33",
+    "benchmark": "2.1.4",
+    "prettier": "1.18.2",
+    "tap-summary": "4.0.0",
+    "tape": "4.10.2",
+    "ts-node": "8.2.0",
+    "typescript": "3.5.1"
+  }
+}
