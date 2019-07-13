@@ -1,4 +1,4 @@
-import { MatrixMath } from "./matrix.js";
+import { MatrixMath } from "./matrix";
 
 export type Polynomial = bigint[];
 
@@ -29,11 +29,16 @@ export class PolynomialMath {
   }
 
   /**
-   * Returns polynomial x.
+   * Returns polynomial x^n.
    * @returns {Polynomial}
    */
-  static x(): Polynomial {
-    return [0n, 1n];
+  static x(n: number = 1): Polynomial {
+    const f = new Array(n + 1);
+    for (let i = 0; i < n; i++) {
+      f[i] = 0n;
+    }
+    f[n] = 1n;
+    return f;
   }
 
   /**
