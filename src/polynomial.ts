@@ -1,4 +1,4 @@
-import { MatrixMath } from "./matrix.js";
+import { MatrixMath } from "./matrix";
 
 export type Polynomial = bigint[];
 
@@ -29,11 +29,17 @@ export class PolynomialMath {
   }
 
   /**
-   * Returns polynomial x.
+   * Returns polynomial x^n.
+   * @param {number} n
    * @returns {Polynomial}
    */
-  static x(): Polynomial {
-    return [0n, 1n];
+  static x(n: number = 1): Polynomial {
+    const f = new Array(n + 1);
+    for (let i = 0; i <= n; i + 1) {
+      f[i] = 0n;
+    }
+    f[n] = 1n;
+    return f;
   }
 
   /**
@@ -124,19 +130,6 @@ export class PolynomialMath {
   }
 
   /**
-   * Returns true if the ideals (f) and (g) in Z[x]
-   * sum to (1). Otherwise, returns false.
-   * @param {Polynomial} f
-   * @param {Polynomial} g
-   * @returns {boolean}
-   */
-  static coprime(f: Polynomial, g: Polynomial): boolean {
-    // TODO: run xgcd in Q[x] to find u,v such that u*f + v*g = 1.
-    //       return false if no such u,v exist or if u,v not in Z[x].
-    throw new Error("unimplemented");
-  }
-
-  /**
    * Returns the derivative of the polynomial f.
    * @param {Polynomial} f
    * @returns {Polynomial}
@@ -215,7 +208,38 @@ export class PolynomialMath {
    * @returns {Polynomial}
    */
   static fromString(s: string): Polynomial {
-    // TODO
-    throw Error("unimplemented");
+    if (!s.includes("x")) {
+      return [BigInt(s)];
+    }
+    const arr = s.split(/\s(?=[+-])/).map(t => t.replace(/\s*/g, ""));
+    const f = [];
+    for (let term of arr.reverse()) {
+      let d: number;
+      let a: bigint;
+      if (term.includes("x")) {
+        if (term.includes("^")) {
+          d = parseInt(/\^(\d+)/.exec(term)![1], 10);
+        } else {
+          d = 1;
+        }
+        if (term.includes("*")) {
+          a = BigInt(term.split("*")[0]);
+        } else {
+          if (term.includes("-")) {
+            a = -1n;
+          } else {
+            a = 1n;
+          }
+        }
+      } else {
+        d = 0;
+        a = BigInt(term);
+      }
+      while (f.length <= d) {
+        f.push(0n);
+      }
+      f[d] = a;
+    }
+    return f;
   }
 }

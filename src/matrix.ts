@@ -1,4 +1,4 @@
-import { PolynomialMath } from "./polynomial.js";
+import { PolynomialMath } from "./polynomial";
 
 export type Matrix = bigint[][];
 
