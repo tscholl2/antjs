@@ -220,7 +220,38 @@ export class PolynomialMath {
    * @returns {Polynomial}
    */
   static fromString(s: string): Polynomial {
-    // TODO
-    throw Error("unimplemented");
+    if (!s.includes("x")) {
+      return [BigInt(s)];
+    }
+    const arr = s.split(/\s(?=[+-])/).map(t => t.replace(/\s*/g, ""));
+    const f = [];
+    for (let term of arr.reverse()) {
+      let d: number;
+      let a: bigint;
+      if (term.includes("x")) {
+        if (term.includes("^")) {
+          d = parseInt(/\^(\d+)/.exec(term)![1], 10);
+        } else {
+          d = 1;
+        }
+        if (term.includes("*")) {
+          a = BigInt(term.split("*")[0]);
+        } else {
+          if (term.includes("-")) {
+            a = -1n;
+          } else {
+            a = 1n;
+          }
+        }
+      } else {
+        d = 0;
+        a = BigInt(term);
+      }
+      while (f.length <= d) {
+        f.push(0n);
+      }
+      f[d] = a;
+    }
+    return f;
   }
 }
