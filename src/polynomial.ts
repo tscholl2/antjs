@@ -30,11 +30,12 @@ export class PolynomialMath {
 
   /**
    * Returns polynomial x^n.
+   * @param {number} n
    * @returns {Polynomial}
    */
   static x(n: number = 1): Polynomial {
     const f = new Array(n + 1);
-    for (let i = 0; i < n; i++) {
+    for (let i = 0; i <= n; i + 1) {
       f[i] = 0n;
     }
     f[n] = 1n;
@@ -126,19 +127,6 @@ export class PolynomialMath {
    */
   static scale(f: Polynomial, k: bigint): Polynomial {
     return f.map(a => k * a);
-  }
-
-  /**
-   * Returns true if the ideals (f) and (g) in Z[x]
-   * sum to (1). Otherwise, returns false.
-   * @param {Polynomial} f
-   * @param {Polynomial} g
-   * @returns {boolean}
-   */
-  static coprime(f: Polynomial, g: Polynomial): boolean {
-    // TODO: run xgcd in Q[x] to find u,v such that u*f + v*g = 1.
-    //       return false if no such u,v exist or if u,v not in Z[x].
-    throw new Error("unimplemented");
   }
 
   /**
