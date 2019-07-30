@@ -1,7 +1,6 @@
 import { Suite } from "benchmark";
 import { PolynomialMath } from "./polynomial";
-import { Domain } from "./structures";
-import { PolynomialMath as PolynomialMath2 } from "./polynomial2";
+import { Domain } from "./ring";
 import { BigIntMath } from "./math";
 
 const ZZ: Domain<bigint> = {
@@ -12,10 +11,12 @@ const ZZ: Domain<bigint> = {
   equal: (x, y) => x === y,
   one: () => 1n,
   int: a => BigInt(a),
-  bint: a => a
+  bint: a => a,
+  isUnit: r => r * r === 1n,
+  scale: (k, a) => k * a
 };
 
-const P = PolynomialMath2(ZZ);
+const P = PolynomialMath(ZZ);
 
 function randomPoly(): any {
   let f = Array<bigint>(101);
@@ -30,9 +31,6 @@ const f2 = randomPoly();
 
 new Suite()
   .add("Polynomial f*g", () => {
-    PolynomialMath.mul(f1, f2);
-  })
-  .add("Polynomial2 f*g", () => {
     P.mul(f1, f2);
   })
   .on("cycle", (event: any) => {
