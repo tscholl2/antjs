@@ -207,7 +207,8 @@ export class MatrixMath {
     return det(B);
 
     function det(A: bigint[][][]): bigint[] {
-      if (A.length <= 1) {
+      const n = A.length;
+      if (n <= 1) {
         return A[0][0];
       }
       let f = PolynomialMath.zero();
@@ -219,6 +220,97 @@ export class MatrixMath {
       }
       return f;
     }
+  }
+
+  static copy(A: Matrix): Matrix {
+    const n = A.length;
+    const B = MatrixMath.zero(n);
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        B[i][j] = A[i][j];
+      }
+    }
+    return B;
+  }
+
+  /**
+   * Given an nxm matrix A, this returns P,L,D,U
+   * integer matrices such that
+   *  - P is an nxn permutation matrix
+   *  - L is nxn and lower triangular
+   *  - D is nxn and diagonal
+   *  - U is nxm and upper triangular
+   *  - P*A = L*D^(-1)*U
+   * @param {matrix} A input matrix
+   */
+  static luDecomposition(A: Matrix): Matrix[] {
+    const U = MatrixMath.copy(A);
+    const n = U.length;
+    const m = U[0].length;
+    let oldpivot = 1n;
+    const L = MatrixMath.one(n);
+    const D = MatrixMath.zero(n);
+    for (let i = 0; i < n; i++) {
+      D[i][i] = 0n;
+    }
+    const P = MatrixMath.one(n);
+    for (let k = 0; k < n; k++) {
+      if (U[k][k] === 0n) {
+        let kpivot = k + 1;
+        let Notfound = true;
+        while (kpivot < n && Notfound) {
+          if (U[kpivot][k] !== 0n) {
+            Notfound = false;
+          } else {
+            kpivot++;
+          }
+        }
+        if (kpivot === n) {
+          throw new Error("Matrix not full rank");
+        } else {
+          // swap := U[k, k..n];
+          const swap = new Array(n);
+          for (let j = 0; j < n; j++) {
+            swap[j] = U[k][j];
+          }
+          // U[k,k..n] := U[kpivot, k..n];
+          for (let j = k; j < n; j++) {
+            U[k][j] = U[kpivot][j];
+          }
+          // U[kpivot, k..n] := swap;
+          for (let j = k; j < n; j++) {
+            U[kpivot][j] = swap[j];
+          }
+          // swap := P[k, k..n];
+          for (let j = 0; j < n; j++) {
+            swap[j] = P[k][j];
+          }
+          // P[k, k..n] := P[kpivot, k..n];
+          for (let j = k; j < n; j++) {
+            P[k][j] = P[kpivot][j];
+          }
+          // P[kpivot, k..n] := swap;
+          for (let j = k; j < n; j++) {
+            P[kpivot][j] = swap[j];
+          }
+        }
+      }
+      L[k][k] = U[k][k];
+      D[k][k] = oldpivot * U[k][k];
+      const Ukk = U[k][k];
+      for (let i = k + 1; i < n; i++) {
+        L[i][k] = U[i][k];
+        const Uik = U[i][k];
+        for (let j = k + 1; j < m; j++) {
+          // U[i,j] := normal((Ukk*U[i,j]2U[k,j]*Uik)/oldpivot);
+          U[i][j] = (Ukk * U[i][j] - U[k][j] * Uik) / oldpivot;
+        }
+        U[i][k] = 0n;
+      }
+      oldpivot = U[k][k];
+    }
+    D[n-1][n-1] = oldpivot;
+    return [P,L,U,D];
   }
 
   /**

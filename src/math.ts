@@ -1,3 +1,5 @@
+import { EllipticCurveMath, EllipticCurve, Point } from "./ellipticcurve";
+
 export class BigIntMath {
   // Some methods from:
   // https://golb.hplar.ch/2018/09/javascript-bigint.html
@@ -318,6 +320,59 @@ export class BigIntMath {
       return false;
     } while (--iterations > 0);
     return true;
+  }
+
+  static pollardRho(n: bigint): bigint {
+    // https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm
+    let x = 2n,
+      y = 2n,
+      d = 1n;
+    while (d === 1n) {
+      x = g(x);
+      y = g(g(y));
+      d = BigIntMath.gcd(BigIntMath.abs(x - y), n);
+    }
+    if (d === n) {
+      throw new Error("failure");
+    } else {
+      return d;
+    }
+    function g(x: bigint): bigint {
+      return (x * x + 1n) % n;
+    }
+  }
+
+  static lenstraFactorization(N: bigint): bigint {
+    const L = 100; // TODO: fix
+    while (true) {
+      const A = BigIntMath.random(N);
+      const x = BigIntMath.random(N);
+      const y = BigIntMath.random(N);
+      const B = y ** 2n - (x ** 3n + A * x);
+      const E = { A, B, N };
+      let P: Point = [x, y];
+      let d = 1n;
+      for (let i = 1n; i < L; i++) {
+        try {
+          P = EllipticCurveMath.scale(E, i, P);
+        } catch (e) {
+          const arr = /unable to invert (-?\d+) mod \d+/.exec(e.message);
+          if (arr == null) {
+            throw e;
+          }
+          const a = BigInt(arr[1]);
+          d = BigIntMath.gcd(a, N);
+          if (1n < d && d < N) {
+            return d;
+          }
+        }
+      }
+    }
+  }
+
+  static factor(n: bigint): bigint[][][] {
+    // TODO
+    throw new Error("unimplemented");
   }
 
   static toString(a: bigint): String {
