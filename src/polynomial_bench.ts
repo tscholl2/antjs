@@ -1,27 +1,13 @@
 import { Suite } from "benchmark";
 import { PolynomialMath } from "./polynomial";
-import { Domain } from "./ring";
-import { BigIntMath } from "./math";
+import { Integers } from "./math";
 
-const ZZ: Domain<bigint> = {
-  add: (x, y) => x + y,
-  sub: (x, y) => x - y,
-  mul: (x, y) => x * y,
-  zero: () => 0n,
-  equal: (x, y) => x === y,
-  one: () => 1n,
-  int: a => BigInt(a),
-  bint: a => a,
-  isUnit: r => r * r === 1n,
-  scale: (k, a) => k * a
-};
-
-const P = PolynomialMath(ZZ);
+const P = PolynomialMath(Integers);
 
 function randomPoly(): any {
   let f = Array<bigint>(101);
   for (let i = 0; i < 101; i++) {
-    f[i] = BigIntMath.random(10000000n);
+    f[i] = Integers.random(10000000n);
   }
   return f;
 }

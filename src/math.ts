@@ -1,4 +1,18 @@
-export class BigIntMath {
+export class Integers {
+
+    static add = (x: bigint, y: bigint) => x + y
+    static sub = (x: bigint, y: bigint) => x - y
+    static mul = (x: bigint, y: bigint) => x * y
+    static zero = () => 0n
+    static equal = (x: bigint, y: bigint) => x === y
+    static one = () => 1n
+    static int = (a: number) => BigInt(a)
+    static bint = (a: bigint) => a
+    static isUnit = (r: bigint) => r === 1n || r === -1n
+    static scale = (k: bigint, a: bigint) => k * a
+  
+
+
   // Some methods from:
   // https://golb.hplar.ch/2018/09/javascript-bigint.html
 
@@ -9,7 +23,7 @@ export class BigIntMath {
    * @returns {[bigint,bigint]}
    */
   static isPerfectPower(n: bigint): [bigint, bigint] {
-    let max = BigInt(BigIntMath.bitLength(n));
+    let max = BigInt(Integers.bitLength(n));
     for (let b = max; b >= 1n; b--) {
       // binary search for a such that a^b = n
       let L = 2n;
@@ -72,7 +86,7 @@ export class BigIntMath {
    * @returns {bigint}
    */
   static min(...values: bigint[]): bigint {
-    return -BigIntMath.max(...values.map(a => -a));
+    return -Integers.max(...values.map(a => -a));
   }
 
   /**
@@ -104,7 +118,7 @@ export class BigIntMath {
    */
   static gcd(...values: bigint[]): bigint {
     // http://rosettacode.org/wiki/Greatest_common_divisor#JavaScript
-    values = values.map(a => BigIntMath.abs(a));
+    values = values.map(a => Integers.abs(a));
     let x = values[0];
     for (let i = 1; i < values.length; i++) {
       let y = values[i];
@@ -124,8 +138,8 @@ export class BigIntMath {
    * @returns {[bigint,bigint[]]}
    */
   static xgcd(...values: bigint[]): [bigint, bigint[]] {
-    const signs = values.map(a => BigIntMath.sign(a));
-    values = values.map(a => BigIntMath.abs(a));
+    const signs = values.map(a => Integers.sign(a));
+    values = values.map(a => Integers.abs(a));
     let d = values[0];
     const ci = [signs[0]];
     for (let i = 1; i < values.length; i++) {
@@ -189,7 +203,7 @@ export class BigIntMath {
     let x = values[0];
     for (let i = 1; i < values.length; i++) {
       let y = values[i];
-      x *= y / BigIntMath.gcd(x, y);
+      x *= y / Integers.gcd(x, y);
     }
     return x;
   }
@@ -269,7 +283,7 @@ export class BigIntMath {
       return 0n;
     }
     let result = 0n;
-    for (let i = BigIntMath.bitLength(n); i--; i >= 0) {
+    for (let i = Integers.bitLength(n); i--; i >= 0) {
       result += Math.random() > 0.5 ? 1n : 0n;
       result <<= 1n;
     }
@@ -290,7 +304,7 @@ export class BigIntMath {
       return false;
     }
     // Small cases (7420738134810 == prod primes up to 40)
-    if (BigIntMath.gcd(n, 7420738134810n) > 1n) {
+    if (Integers.gcd(n, 7420738134810n) > 1n) {
       return [2n, 3n, 5n, 7n, 11n, 13n, 17n, 19n, 23n, 29n, 31n, 37n].includes(
         n
       );
@@ -304,8 +318,8 @@ export class BigIntMath {
     }
     // https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test#Miller%E2%80%93Rabin_test
     witnessLoop: do {
-      const a = BigIntMath.random(n - 4n) + 2n;
-      let x = BigIntMath.pow(a, d, n);
+      const a = Integers.random(n - 4n) + 2n;
+      let x = Integers.pow(a, d, n);
       if (x === 1n || x === n - 1n) {
         continue witnessLoop;
       }
